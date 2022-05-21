@@ -8,7 +8,7 @@ const { PORT = 3000} = process.env;
 
 const app = express();
 
-app.use('/users', (req, res) => {
+/*app.use('/users', (req, res) => {
     console.log('hello,  username')
     res.status(200).send('all ok')
 })
@@ -25,7 +25,7 @@ app.use('/', (req, res) => {
     res.status(200).send('all ok')
 })
 
-//mongoose.connect('mongodb://localhost:27017/mestodb');
+//mongoose.connect('mongodb://localhost:27017/mestodb'); */
 
 app.listen(3000, () => {
 console.log('sunny bunny')});
