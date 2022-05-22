@@ -1,10 +1,9 @@
-const User = require('../models/user')
-
+const User = require('../models/user');
 
 const getUsers = (req, res) => {
   User.find({})
     .then((users) => res.send({ data: users }))
-    .catch(() => res.status(500).send({ message: 'Ошибка на сервере' }))
+    .catch(() => res.status(500).send({ message: 'Ошибка на сервере' }));
 };
 
 const getUserById = (req, res) => {
@@ -21,7 +20,7 @@ const getUserById = (req, res) => {
         res.status(400).send({ message: 'Некорректные данные id' });
         return;
       }
-      res.status(500).send({ message: 'Ошибка на сервере' })
+      res.status(500).send({ message: 'Ошибка на сервере' });
     });
 };
 
@@ -34,8 +33,8 @@ const createUsers = (req, res) => {
         res.status(400).send({ message: 'Некорректные данные пользователя' });
         return;
       }
-      res.status(500).send({ message: 'Ошибка на сервере' })
+      res.status(500).send({ message: 'Ошибка на сервере' });
     });
-}
+};
 
-module.exports = { getUsers, getUserById, createUsers }
+module.exports = { getUsers, getUserById, createUsers };

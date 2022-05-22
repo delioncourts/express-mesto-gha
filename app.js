@@ -11,4 +11,5 @@ app.use(express.json());
 app.use('/users', require('./routes/users'));
 
 app.listen(PORT, () => {
-console.log('server is set')});
+  console.log('server is set');
+});
