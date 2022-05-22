@@ -26,12 +26,11 @@ const getUserById = (req, res) => {
 
 const createUsers = (req, res) => {
   const { name, about, avatar } = req.body;
-  User.create({ name, about, avatar })
+  return User.create({ name, about, avatar })
     .then((user) => res.status(201).send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Некорректные данные пользователя' });
-        return;
+        return res.status(400).send({ message: 'Некорректные данные пользователя' });
       }
       res.status(500).send({ message: 'Ошибка на сервере' });
     });
