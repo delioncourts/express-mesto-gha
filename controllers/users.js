@@ -24,7 +24,7 @@ const getUserById = (req, res) => {
 
 const createUsers = (req, res) => {
   const { name, about, avatar } = req.body;
-  return User.create({ name, about, avatar })
+  User.create({ name, about, avatar })
     .then((user) => res.status(201).send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -36,7 +36,7 @@ const createUsers = (req, res) => {
 
 const updateUser = (req, res) => {
   const { name, about } = req.body;
-  return User.findByIdAndUpdate(
+  User.findByIdAndUpdate(
     req.user._id,
     { name, about },
     { new: true, runValidators: true, upsert: false },
@@ -57,7 +57,7 @@ const updateUser = (req, res) => {
 
 const updateAvatar = (req, res) => {
   const { avatar } = req.body;
-  return User.findByIdAndUpdate(
+  User.findByIdAndUpdate(
     req.user._id,
     { avatar },
     { new: true, runValidators: true, upsert: false },
