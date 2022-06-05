@@ -43,6 +43,14 @@ const getUserById = (req, res, next) => {
     });
 };
 
+const getCurrentUser = (req, res, next) => {
+  User.findById(req.user._id)
+    .then((users) => {
+      res.send({ data: users });
+    })
+    .catch((err) => next(err));
+};
+
 const createUsers = (req, res, next) => {
   const {
     name, about, avatar, email, password,
@@ -114,5 +122,5 @@ const updateAvatar = (req, res, next) => {
 };
 
 module.exports = {
-  login, getUsers, getUserById, createUsers, updateUser, updateAvatar,
+  login, getUsers, getUserById, createUsers, updateUser, updateAvatar, getCurrentUser,
 };
