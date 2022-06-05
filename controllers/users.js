@@ -1,40 +1,77 @@
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 const User = require('../models/user');
 
-const getUsers = (req, res) => {
-  User.find({})
-    .then((users) => res.send({ data: users }))
-    .catch(() => res.status(500).send({ message: 'Ошибка на сервере' }));
+const BadRequestError = require('../errors/BadRequestError');
+const ConflictError = require('../errors/ConflictError');
+const NotFoundError = require('../errors/NotFoundError');
+const UnauthorizedError = require('../errors/UnauthorizedError');
+
+const { STATUS_OK, STATUS_CREATED } = require('../utils/const');
+
+const login = (req, res, next) => {
+  const { email, password } = req.body;
+
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign({ _id: user._id }, 'super-strong-secret', { expiresIn: '7d' });
+
+      res.send({ token });
+    })
+    .catch(() => next(new UnauthorizedError('Неверная почта или пароль')));
 };
 
-const getUserById = (req, res) => {
+const getUsers = (req, res, next) => {
+  User.find({})
+    .then((users) => res.status(STATUS_OK).send({ data: users }))
+    .catch(next);
+};
+
+const getUserById = (req, res, next) => {
   User.findById(req.params.userId)
     .then((users) => {
       if (!users) {
-        return res.status(404).send({ message: 'Пользователь не найден' });
+        throw new NotFoundError('Пользователь не найден');
       }
-      return res.send({ data: users });
+      return res.status(STATUS_OK).send({ data: users });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(400).send({ message: 'Некорректные данные id' });
+        return next(new BadRequestError('Некорректные данные id'));
       }
-      return res.status(500).send({ message: 'Ошибка на сервере' });
+      return next(err);
     });
 };
 
-const createUsers = (req, res) => {
-  const { name, about, avatar } = req.body;
-  User.create({ name, about, avatar })
-    .then((user) => res.status(201).send({ data: user }))
+const createUsers = (req, res, next) => {
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
+
+  return bcrypt.hash(password, 10)
+    .then((hash) => User.create({
+      name, about, avatar, email, password: hash,
+    }))
+    .then((user) => res.status(STATUS_CREATED).send({
+      data: {
+        name: user.name,
+        about: user.about,
+        avatar: user.avatar,
+        email: user.email,
+      },
+    }))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        return res.status(400).send({ message: 'Некорректные данные пользователя' });
+      if (err.code === 11000) {
+        return next(new ConflictError('Данный email уже зарегистрирован'));
       }
-      return res.status(500).send({ message: 'Ошибка на сервере' });
+      if (err.name === 'ValidationError') {
+        return next(new BadRequestError('Некорректные данные пользователя'));
+      }
+      return next(err);
     });
 };
 
-const updateUser = (req, res) => {
+const updateUser = (req, res, next) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate(
     req.user._id,
@@ -43,19 +80,19 @@ const updateUser = (req, res) => {
   )
     .then((user) => {
       if (!user) {
-        return res.status(404).send({ message: 'Пользователь не найден' });
+        throw new NotFoundError('Пользователь не найден');
       }
       return res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(400).send({ message: 'Некорректные данные пользователя' });
+        return next(new BadRequestError('Некорректные данные пользователя'));
       }
-      return res.status(500).send({ message: 'Ошибка на сервере' });
+      return next(err);
     });
 };
 
-const updateAvatar = (req, res) => {
+const updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
   User.findByIdAndUpdate(
     req.user._id,
@@ -64,18 +101,18 @@ const updateAvatar = (req, res) => {
   )
     .then((user) => {
       if (!user) {
-        return res.status(404).send({ message: 'Пользователь не найден' });
+        throw new NotFoundError('Пользователь не найден');
       }
       return res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(400).send({ message: 'Некорректные данные пользователя' });
+        return next(new BadRequestError('Некорректные данные пользователя'));
       }
-      return res.status(500).send({ message: 'Ошибка на сервере' });
+      return next(err);
     });
 };
 
 module.exports = {
-  getUsers, getUserById, createUsers, updateUser, updateAvatar,
+  login, getUsers, getUserById, createUsers, updateUser, updateAvatar,
 };
