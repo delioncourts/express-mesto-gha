@@ -20,11 +20,13 @@ mongoose.connect('mongodb://localhost:27017/mestodb');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use('/', auth, users);
-app.use('/', auth, cards);
-
 app.post('/signin', validateLogin, login);
 app.post('/signup', validateUser, createUsers);
+
+app.use(auth);
+
+app.use('/', users);
+app.use('/', cards);
 
 app.use((req, res, next) => {
   next(new NotFoundError('К сожалению, запращиваемый ресурс не найден'));
@@ -32,7 +34,7 @@ app.use((req, res, next) => {
 
 app.use(errors());
 
-app.use((req, res, next, err) => {
+app.use((err, req, res, next) => {
   const { statusCode = ERROR_SERVER, message } = err;
   const errorMessage = (statusCode === ERROR_SERVER) ? 'Ошибка на сервере' : message;
   res.status(statusCode).send({ message: errorMessage });
