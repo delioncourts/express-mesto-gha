@@ -1,28 +1,27 @@
-[![Tests](https://github.com/delioncourts/express-mesto-gha/actions/workflows/tests-13-sprint.yml/badge.svg)](https://github.com/delioncourts/express-mesto-gha/actions/workflows/tests-13-sprint.yml) [![Tests](https://github.com/delioncourts/express-mesto-gha/actions/workflows/tests-14-sprint.yml/badge.svg)](https://github.com/delioncourts/express-mesto-gha/actions/workflows/tests-14-sprint.yml)
-# Проект Mesto фронтенд + бэкенд
+[![Tests](https://github.com/delioncourts/express-mesto-gha/actions/workflows/tests-14-sprint.yml/badge.svg)](https://github.com/delioncourts/express-mesto-gha/actions/workflows/tests-14-sprint.yml)
 
+# Проект Mesto бэкенд
 
+REST API для проектной работы "Mesto". При запуске приложения подключается к mongo по адресу: mongodb://localhost:27017/mestodb. В приложении описана схема пользователя и схема карточки. Успешно проходит автотесты (14 спринт).
 
-## Настройка бейджей статуса тестов
-Перед началом работы над проектом рекомендуется исправить бейджи, отражающие статус прохождения тестов.
-Для этого замените разметку бейджей на следующий фрагмент, подставив вместо `${имя_пользователя}` и `${имя_репозитория}` соответствующие значения.
+## Роуты для пользователей:
+* GET /users - возвращает всех пользователей.
+* GET /users/:userId - возвращает пользователя по переданному id.
+* GET /users/me - возвращает текущего пользователя.
+* PATCH /users/me - обновляет данные пользователя.
+* PATCH /users/me/avatar - обновляет аватар пользователя.
 
-```
-[![Tests for sprint 13](https://github.com/${имя_пользователя}/${имя репозитория}/actions/workflows/tests-13-sprint.yml/badge.svg)](https://github.com/${имя_пользователя}/${имя репозитория}/actions/workflows/tests-13-sprint.yml) 
-
-[![Tests for sprint 14](https://github.com/${имя_пользователя}/${имя репозитория}/actions/workflows/tests-14-sprint.yml/badge.svg)](https://github.com/${имя_пользователя}/${имя репозитория}/actions/workflows/tests-14-sprint.yml)
-```
-
+## Роуты для карточек:
+* GET /cards - возвращает все карточки из базы данных.
+* POST /cards - создаёт карточку.
+* DELETE /cards/:cardId - удаляет карточку по переданному id.
 
 ## Директории
-
 `/routes` — папка с файлами роутера  
 `/controllers` — папка с файлами контроллеров пользователя и карточки   
 `/models` — папка с файлами описания схем пользователя и карточки  
-  
-Остальные директории вспомогательные, создаются при необходимости разработчиком
 
-## Запуск проекта
-
-`npm run start` — запускает сервер   
-`npm run dev` — запускает сервер с hot-reload
+## Запуск проекта локально
+* `npm run start` — запускает сервер   
+* `npm run dev` — запускает сервер с hot-reload
+* `npm run lint` - запустить линтер
